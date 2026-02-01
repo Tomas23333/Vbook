@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vytvoriť booking stránku – Vbook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="vbook-section">
+  <div class="vbook-container">
+
+    <h1>Vytvorte si vlastnú booking stránku</h1>
+    <p class="text-muted">
+      Nastavte základné informácie, dostupnosť a vygenerujte link pre zákazníkov.
+    </p>
+
+    <div class="builder-grid">
+
+      <!-- FORM -->
+      <div class="vbook-card">
+        <h3>Základné informácie</h3>
+
+        <div class="form-group">
+          <label>Názov služby / firmy</label>
+          <input id="serviceName" placeholder="Barber Shop Bratislava">
+        </div>
+
+        <div class="form-group">
+          <label>Popis</label>
+          <textarea id="serviceDesc" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Email / telefón</label>
+          <input id="contact" placeholder="info@barber.sk">
+        </div>
+
+        <hr>
+
+        <h3>Dostupnosť</h3>
+
+        <div class="availability">
+          <label><input type="checkbox" value="Mon"> Pondelok</label>
+          <label><input type="checkbox" value="Tue"> Utorok</label>
+          <label><input type="checkbox" value="Wed"> Streda</label>
+          <label><input type="checkbox" value="Thu"> Štvrtok</label>
+          <label><input type="checkbox" value="Fri"> Piatok</label>
+        </div>
+
+        <div class="time-range">
+          <label>Od</label>
+          <input type="time" id="fromTime" value="09:00">
+          <label>Do</label>
+          <input type="time" id="toTime" value="17:00">
+        </div>
+
+        <button class="vbook-btn full-width" onclick="createLink()">
+          Vytvoriť booking link
+        </button>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="vbook-card">
+        <h3>Náhľad</h3>
+        <strong id="pName">Názov služby</strong>
+        <p id="pDesc">Popis služby</p>
+        <p id="pContact">📧 kontakt@email.sk</p>
+        <p><strong>Dostupnosť:</strong></p>
+        <p id="pDays">–</p>
+        <p id="pTime">–</p>
+      </div>
+
+    </div>
+
+    <div id="result" class="vbook-card" style="margin-top:2rem;display:none;">
+      <h3>Link pre zákazníkov</h3>
+      <input id="bookingLink" readonly style="width:100%;">
+    </div>
+
+  </div>
+</section>
+
+<script>
+const serviceName = document.getElementById("serviceName");
+const serviceDesc = document.getElementById("serviceDesc");
+const contact = document.getElementById("contact");
+const fromTime = document.getElementById("fromTime");
+const toTime = document.getElementById("toTime");
+
+const pName = document.getElementById("pName");
+const pDesc = document.getElementById("pDesc");
+const pContact = document.getElementById("pContact");
+const pDays = document.getElementById("pDays");
+const pTime = document.getElementById("pTime");
+
+function updatePreview() {
+  pName.innerText = serviceName.value || "Názov služby";
+  pDesc.innerText = serviceDesc.value || "Popis služby";
+  pContact.innerText = contact.value ? "📧 " + contact.value : "📧 kontakt@email.sk";
+
+  const days = [...document.querySelectorAll('.availability input:checked')]
+    .map(i => i.parentElement.innerText.trim());
+  pDays.innerText = days.length ? days.join(", ") : "–";
+
+  pTime.innerText = fromTime.value && toTime.value
+    ? `${fromTime.value} – ${toTime.value}`
+    : "–";
+}
+
+document.querySelectorAll("input, textarea").forEach(el =>
+  el.addEventListener("input", updatePreview)
+);
+
+function createLink() {
+  const days = [...document.querySelectorAll('.availability input:checked')]
+    .map(i => i.value)
+    .join(",");
+
+  const params = new URLSearchParams({
+    name: serviceName.value,
+    desc: serviceDesc.value,
+    contact: contact.value,
+    days: days,
+    from: fromTime.value,
+    to: toTime.value
+  });
+
+  const link = "booking.html?" + params.toString();
+  document.getElementById("bookingLink").value = link;
+  document.getElementById("result").style.display = "block";
+}
+</script>
+
+</body>
+</html>

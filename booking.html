@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezervácia – Vbook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<section class="vbook-section">
+  <div class="vbook-container">
+
+    <div class="vbook-card" style="max-width:500px;">
+      <h1 id="serviceName"></h1>
+      <p id="serviceDesc" class="text-muted"></p>
+
+      <form>
+
+        <div class="form-group">
+          <label>Dátum</label>
+          <input type="date" required>
+        </div>
+
+        <div class="form-group">
+          <label>Čas</label>
+          <input type="time" required>
+        </div>
+
+        <div class="form-group">
+          <label>Poznámka</label>
+          <textarea rows="3" placeholder="Voliteľné"></textarea>
+        </div>
+
+        <button class="vbook-btn full-width">
+          Potvrdiť rezerváciu
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script>
+document.getElementById("serviceName").innerText =
+  localStorage.getItem("vbook_service_name") || "Rezervácia";
+
+document.getElementById("serviceDesc").innerText =
+  localStorage.getItem("vbook_service_desc") || "";
+</script>
+
+</body>
+</html>
