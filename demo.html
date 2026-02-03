@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vytvoriť booking stránku – Vbook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="vbook-section">
+  <div class="vbook-container" style="max-width:900px;">
+
+    <h1>Vytvorte si vlastnú booking stránku</h1>
+    <p class="text-muted">
+      Vyplňte údaje o službe, nastavte dostupnosť a vygenerujte link pre zákazníkov.
+    </p>
+
+    <div class="vbook-card" style="margin-top:4rem;">
+      <h2>1️⃣ Základné informácie</h2>
+
+      <div class="form-group">
+        <label>Názov služby / firmy</label>
+        <input id="serviceName" placeholder="Barber Shop Bratislava">
+      </div>
+
+      <div class="form-group">
+        <label>Popis služby</label>
+        <textarea id="serviceDesc" placeholder="Krátky popis služby"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input id="contact" placeholder="info@barber.sk">
+      </div>
+
+      <div class="form-group">
+        <label>Telefónne číslo</label>
+        <input id="phone" placeholder="+421 900 123 456">
+      </div>
+
+      <div class="form-group">
+        <label>Poloha / adresa</label>
+        <input id="location" placeholder="Hlavná 12, Bratislava">
+      </div>
+    </div>
+
+    <div class="vbook-card" style="margin-top:4rem;">
+      <h2>2️⃣ Dostupnosť</h2>
+
+      <div class="availability">
+        <input type="checkbox" id="mon" value="Mon"><label for="mon">Pondelok</label>
+        <input type="checkbox" id="tue" value="Tue"><label for="tue">Utorok</label>
+        <input type="checkbox" id="wed" value="Wed"><label for="wed">Streda</label>
+        <input type="checkbox" id="thu" value="Thu"><label for="thu">Štvrtok</label>
+        <input type="checkbox" id="fri" value="Fri"><label for="fri">Piatok</label>
+      </div>
+
+      <div class="time-range">
+        <div class="time-box">
+          <span>Od</span>
+          <input type="time" id="fromTime" value="09:00">
+        </div>
+
+        <span class="time-separator">→</span>
+
+        <div class="time-box">
+          <span>Do</span>
+          <input type="time" id="toTime" value="17:00">
+        </div>
+      </div>
+    </div>
+
+    <div class="vbook-card" style="margin-top:4rem;">
+      <h2>3️⃣ Vytvorenie booking linku</h2>
+
+      <button class="vbook-btn full-width large-btn" onclick="createLink()">
+        Vytvoriť booking link
+      </button>
+    </div>
+
+    <!-- ------- -->
+    <div id="result" class="vbook-card" style="display:none; margin-top:4rem;">
+      <h3>Link pre zákazníkov</h3>
+      <input id="bookingLink" readonly style="width:100%;">
+    </div>
+
+  </div>
+</section>
+
+<script>
+function createLink() {
+  const name = document.getElementById("serviceName").value;
+  const desc = document.getElementById("serviceDesc").value;
+  const contact = document.getElementById("contact").value;
+  const phone = document.getElementById("phone").value;
+  const location = document.getElementById("location").value;
+  const from = document.getElementById("fromTime").value;
+  const to = document.getElementById("toTime").value;
+
+  const days = [...document.querySelectorAll('.availability input:checked')]
+    .map(i => i.value)
+    .join(",");
+
+  if (!name || !days || !from || !to) {
+    alert("Vyplň názov služby, dni dostupnosti a čas.");
+    return;
+  }
+
+  const params = new URLSearchParams({
+    name, desc, contact, phone, location, days, from, to
+  });
+
+  const baseUrl = window.location.href.split("/").slice(0, -1).join("/");
+  document.getElementById("bookingLink").value =
+    baseUrl + "/booking.html?" + params.toString();
+
+  document.getElementById("result").style.display = "block";
+}
+</script>
+
+</body>
+</html>

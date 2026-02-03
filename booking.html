@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezervácia – Vbook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<section class="vbook-section">
+  <div class="vbook-container booking-flow">
+
+    <div class="booking-header">
+      <h1 id="serviceName">Rezervácia</h1>
+      <p id="serviceDesc" class="text-muted"></p>
+    </div>
+
+    <div class="booking-step">
+      <h2>Vyberte dátum</h2>
+
+      <div class="calendar-header">
+        <button id="prevMonth">‹</button>
+        <span id="monthLabel"></span>
+        <button id="nextMonth">›</button>
+      </div>
+
+      <div class="calendar-weekdays">
+        <span>Po</span><span>Ut</span><span>St</span>
+        <span>Št</span><span>Pi</span><span>So</span><span>Ne</span>
+      </div>
+
+      <div class="calendar-grid" id="calendar"></div>
+    </div>
+
+    <div class="booking-step">
+      <h2>Vyberte čas</h2>
+
+      <h4>Dopoludnia</h4>
+      <div class="time-grid" id="timeMorning"></div>
+
+      <h4>Popoludní</h4>
+      <div class="time-grid" id="timeAfternoon"></div>
+    </div>
+
+    <div class="booking-step">
+      <h2>Poznámka</h2>
+      <textarea rows="4" placeholder="Voliteľná poznámka pre poskytovateľa"></textarea>
+    </div>
+
+    <div class="booking-step">
+      <button class="vbook-btn full-width large-btn">
+        Potvrdiť rezerváciu
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* ===== PARAMETRE ===== */
+const params = new URLSearchParams(window.location.search);
+serviceName.innerText = params.get("name") || "Rezervácia";
+serviceDesc.innerText = params.get("desc") || "";
+
+/* ===== KALENDÁR ===== */
+const calendar = document.getElementById("calendar");
+const monthLabel = document.getElementById("monthLabel");
+
+let currentDate = new Date();
+
+function renderCalendar() {
+  calendar.innerHTML = "";
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  monthLabel.innerText = currentDate.toLocaleDateString("sk-SK", {
+    month: "long",
+    year: "numeric"
+  });
+
+  const firstDay = new Date(year, month, 1);
+  const startOffset = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < startOffset; i++) {
+    calendar.appendChild(document.createElement("div"));
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const btn = document.createElement("button");
+    btn.className = "calendar-day";
+    btn.innerText = d;
+
+    btn.onclick = () => {
+      document.querySelectorAll(".calendar-day")
+        .forEach(x => x.classList.remove("active"));
+      btn.classList.add("active");
+    };
+
+    calendar.appendChild(btn);
+  }
+}
+
+document.getElementById("prevMonth").onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+};
+
+document.getElementById("nextMonth").onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+};
+
+renderCalendar();
+
+/* ===== ČAS ===== */
+const morning = ["09:00","09:15","09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45"];
+const afternoon = ["12:00","12:15","12:30","12:45","13:00","13:15","13:30","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45","16:00","16:15","16:30","16:45"];
+
+function renderTimes(arr, id) {
+  const el = document.getElementById(id);
+  arr.forEach(t => {
+    const btn = document.createElement("button");
+    btn.className = "time-slot";
+    btn.innerText = t;
+    btn.onclick = () => {
+      document.querySelectorAll(".time-slot")
+        .forEach(x => x.classList.remove("active"));
+      btn.classList.add("active");
+    };
+    el.appendChild(btn);
+  });
+}
+
+renderTimes(morning, "timeMorning");
+renderTimes(afternoon, "timeAfternoon");
+</script>
+
+</body>
+</html>
