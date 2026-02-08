@@ -16,7 +16,7 @@ body {
   line-height: 1.6;
 }
 
-/* ---------- VARIABLES ---------- */
+/* ---------- PREMENNÉ ---------- */
 :root {
   --primary: #6366f1;
   --primary-dark: #4f46e5;
@@ -26,14 +26,13 @@ body {
   --text-muted: #94a3b8;
 }
 
-/* ---------- CONTAINER ---------- */
+/* ----------------- */
 .vbook-container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* ---------- NAVBAR ---------- */
 .vbook-navbar {
   position: sticky;
   top: 0;
@@ -202,7 +201,7 @@ body {
   box-shadow: 0 30px 60px rgba(0,0,0,0.45);
 }
 
-/* ---------- BOOKING PREVIEW ---------- */
+/* ---------- NAHLAD REZERVACIE ------ */
 .booking-preview h3 {
   margin-bottom: 1.5rem;
 }
@@ -269,9 +268,7 @@ body {
     display: none;
   }
 }
-/* =========================
-   BOOKING – CALENDAR UI
-   ========================= */
+/*BOOKING – KALENDAR UI*/
 
 .calendar-header {
   display: flex;
@@ -327,9 +324,7 @@ body {
   color: #020617;
   border-color: transparent;
 }
-/* =========================
-   TIME PICKER – UX IMPROVED
-   ========================= */
+/*VYBER CASU*/
 
 .booking-step h4 {
   margin-top: 2rem;
@@ -373,9 +368,7 @@ body {
   font-weight: 600;
   box-shadow: 0 10px 30px rgba(74,222,128,0.35);
 }
-/* =========================
-   DEMO BUILDER LAYOUT
-   ========================= */
+/*DEMO BUILDER LAYOUT*/
 
 .builder-layout {
   display: grid;
@@ -408,7 +401,7 @@ body {
   padding: 3rem;
 }
 
-/* lepší text v náhľade */
+/*text v náhľade */
 .builder-preview p {
   margin: 0.6rem 0;
   font-size: 0.95rem;
@@ -442,9 +435,7 @@ body {
     top: auto;
   }
 }
-/* =========================
-   POLIA
-   ========================= */
+/*POLIA*/
 
 .form-group {
   display: flex;
@@ -484,9 +475,7 @@ body {
   resize: vertical;
   min-height: 90px;
 }
-/* =========================
-              DNI
-   ========================= */
+/*DNI*/
 
 .availability {
   display: grid;
@@ -495,7 +484,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* skry checkbox */
+/*checkbox */
 .availability input {
   display: none;
 }
@@ -524,9 +513,7 @@ body {
   border-color: transparent;
   color: white;
 }
-/* =========================
-   CASOVY ROZSAH
-   ========================= */
+/*CASOVY ROZSAH*/
 
 .time-range {
   display: flex;
@@ -569,3 +556,4 @@ body {
   color: var(--primary);
   margin-top: 1.1rem;
 }
+
