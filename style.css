@@ -354,7 +354,6 @@ body {
   transition: all 0.25s ease;
 }
 
-/* hover */
 .time-slot:hover {
   border-color: var(--primary);
   background: rgba(99,102,241,0.12);
@@ -556,4 +555,5 @@ body {
   color: var(--primary);
   margin-top: 1.1rem;
 }
+
 
