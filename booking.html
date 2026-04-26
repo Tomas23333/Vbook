@@ -15,6 +15,12 @@
     <div class="booking-header">
       <h1 id="serviceName">Rezervácia</h1>
       <p id="serviceDesc" class="text-muted"></p>
+
+      <div class="text-muted" style="margin-top:1rem;">
+        <p id="serviceLocation"></p>
+        <p id="serviceContact"></p>
+        <p id="servicePhone"></p>
+      </div>
     </div>
 
     <div class="booking-step">
@@ -46,11 +52,11 @@
 
     <div class="booking-step">
       <h2>Poznámka</h2>
-      <textarea rows="4" placeholder="Voliteľná poznámka pre poskytovateľa"></textarea>
+      <textarea id="note" rows="4" placeholder="Voliteľná poznámka pre poskytovateľa"></textarea>
     </div>
 
     <div class="booking-step">
-      <button class="vbook-btn full-width large-btn">
+      <button class="vbook-btn full-width large-btn" onclick="confirmBooking()">
         Potvrdiť rezerváciu
       </button>
     </div>
@@ -59,16 +65,39 @@
 </section>
 
 <script>
-/*PARAMETRE*/
 const params = new URLSearchParams(window.location.search);
-serviceName.innerText = params.get("name") || "Rezervácia";
-serviceDesc.innerText = params.get("desc") || "";
 
-/*KALENDÁR*/
+const data = {
+  name: params.get("name") || "Rezervácia",
+  desc: params.get("desc") || "",
+  contact: params.get("contact") || "",
+  phone: params.get("phone") || "",
+  location: params.get("location") || "",
+  days: (params.get("days") || "").split(",").filter(Boolean),
+  from: params.get("from") || "09:00",
+  to: params.get("to") || "17:00"
+};
+
+document.getElementById("serviceName").textContent = data.name;
+document.getElementById("serviceDesc").textContent = data.desc;
+
+document.getElementById("serviceLocation").textContent =
+  data.location ? "📍 " + data.location : "";
+
+document.getElementById("serviceContact").textContent =
+  data.contact ? "✉️ " + data.contact : "";
+
+document.getElementById("servicePhone").textContent =
+  data.phone ? "📞 " + data.phone : "";
+
 const calendar = document.getElementById("calendar");
 const monthLabel = document.getElementById("monthLabel");
 
 let currentDate = new Date();
+let selectedDate = "";
+let selectedTime = "";
+
+const dayMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function renderCalendar() {
   calendar.innerHTML = "";
@@ -76,7 +105,7 @@ function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  monthLabel.innerText = currentDate.toLocaleDateString("sk-SK", {
+  monthLabel.textContent = currentDate.toLocaleDateString("sk-SK", {
     month: "long",
     year: "numeric"
   });
@@ -91,13 +120,31 @@ function renderCalendar() {
 
   for (let d = 1; d <= daysInMonth; d++) {
     const btn = document.createElement("button");
+    const dateObj = new Date(year, month, d);
+    const dayCode = dayMap[dateObj.getDay()];
+
     btn.className = "calendar-day";
-    btn.innerText = d;
+    btn.textContent = d;
+
+    const isAllowedDay = data.days.includes(dayCode);
+
+    if (!isAllowedDay) {
+      btn.disabled = true;
+      btn.style.opacity = "0.3";
+      btn.style.cursor = "not-allowed";
+    }
 
     btn.onclick = () => {
       document.querySelectorAll(".calendar-day")
         .forEach(x => x.classList.remove("active"));
+
       btn.classList.add("active");
+
+      selectedDate = dateObj.toLocaleDateString("sk-SK", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
     };
 
     calendar.appendChild(btn);
@@ -114,31 +161,83 @@ document.getElementById("nextMonth").onclick = () => {
   renderCalendar();
 };
 
-renderCalendar();
+function timeToMinutes(time) {
+  const parts = time.split(":");
+  return Number(parts[0]) * 60 + Number(parts[1]);
+}
 
-/*ČAS*/
-const morning = ["09:00","09:15","09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45"];
-const afternoon = ["12:00","12:15","12:30","12:45","13:00","13:15","13:30","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45","16:00","16:15","16:30","16:45"];
+function minutesToTime(minutes) {
+  const h = Math.floor(minutes / 60).toString().padStart(2, "0");
+  const m = (minutes % 60).toString().padStart(2, "0");
+  return h + ":" + m;
+}
 
-function renderTimes(arr, id) {
-  const el = document.getElementById(id);
-  arr.forEach(t => {
+function renderTimes() {
+  const morning = document.getElementById("timeMorning");
+  const afternoon = document.getElementById("timeAfternoon");
+
+  morning.innerHTML = "";
+  afternoon.innerHTML = "";
+
+  const start = timeToMinutes(data.from);
+  const end = timeToMinutes(data.to);
+
+  for (let time = start; time <= end; time += 15) {
+    const timeText = minutesToTime(time);
+
     const btn = document.createElement("button");
     btn.className = "time-slot";
-    btn.innerText = t;
+    btn.textContent = timeText;
+
     btn.onclick = () => {
       document.querySelectorAll(".time-slot")
         .forEach(x => x.classList.remove("active"));
+
       btn.classList.add("active");
+      selectedTime = timeText;
     };
-    el.appendChild(btn);
-  });
+
+    if (time < 12 * 60) {
+      morning.appendChild(btn);
+    } else {
+      afternoon.appendChild(btn);
+    }
+  }
+
+  if (!morning.innerHTML) {
+    morning.innerHTML = "<p class='text-muted'>Žiadne dopoludňajšie časy.</p>";
+  }
+
+  if (!afternoon.innerHTML) {
+    afternoon.innerHTML = "<p class='text-muted'>Žiadne popoludňajšie časy.</p>";
+  }
 }
 
-renderTimes(morning, "timeMorning");
-renderTimes(afternoon, "timeAfternoon");
+function confirmBooking() {
+  if (!selectedDate) {
+    alert("Vyberte dátum.");
+    return;
+  }
+
+  if (!selectedTime) {
+    alert("Vyberte čas.");
+    return;
+  }
+
+  const note = document.getElementById("note").value;
+
+  alert(
+    "Rezervácia potvrdená!\n\n" +
+    "Služba: " + data.name + "\n" +
+    "Dátum: " + selectedDate + "\n" +
+    "Čas: " + selectedTime + "\n" +
+    "Poznámka: " + note
+  );
+}
+
+renderCalendar();
+renderTimes();
 </script>
 
 </body>
 </html>
-
